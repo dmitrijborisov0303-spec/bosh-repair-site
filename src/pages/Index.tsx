@@ -317,6 +317,16 @@ export default function Index() {
                 <Icon name="Phone" size={20} />
                 Вызвать мастера
               </a>
+              <button
+                onClick={() => setCallbackOpen(true)}
+                className="flex items-center justify-center gap-2 px-8 py-4 rounded font-bold text-lg border-2 transition-colors"
+                style={{ borderColor: "var(--brand-red)", color: "var(--brand-red)", backgroundColor: "transparent" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(220,38,38,0.15)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
+              >
+                <Icon name="PhoneCall" size={20} />
+                Обратный звонок
+              </button>
               <a href="#price"
                 className="flex items-center justify-center gap-2 px-8 py-4 rounded font-bold text-lg border-2 text-white border-white/30 hover:border-white/70 transition-colors"
               >

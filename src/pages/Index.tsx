@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Icon from "@/components/ui/icon";
+import CallbackModal from "@/components/CallbackModal";
 
 const SEND_APPLICATION_URL = "https://functions.poehali.dev/8e2e01ab-452f-4967-ae24-2dbd637b802f";
 
@@ -188,6 +189,7 @@ function ContactForm() {
 export default function Index() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [callbackOpen, setCallbackOpen] = useState(false);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "var(--brand-light)", color: "var(--brand-text)", fontFamily: "'Golos Text', sans-serif" }}>
@@ -231,15 +233,27 @@ export default function Index() {
             ))}
           </nav>
 
-          <a href="tel:+79307879192"
-            className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded font-semibold text-sm text-white transition-colors"
-            style={{ backgroundColor: "var(--brand-red)" }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--brand-red-hover)")}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = "var(--brand-red)")}
-          >
-            <Icon name="Phone" size={16} />
-            Вызвать мастера
-          </a>
+          <div className="hidden md:flex items-center gap-2">
+            <button
+              onClick={() => setCallbackOpen(true)}
+              className="flex items-center gap-2 px-5 py-2.5 rounded font-semibold text-sm transition-colors border"
+              style={{ borderColor: "var(--brand-red)", color: "var(--brand-red)", backgroundColor: "transparent" }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(220,38,38,0.1)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
+            >
+              <Icon name="PhoneCall" size={16} />
+              Обратный звонок
+            </button>
+            <a href="tel:+79307879192"
+              className="flex items-center gap-2 px-5 py-2.5 rounded font-semibold text-sm text-white transition-colors"
+              style={{ backgroundColor: "var(--brand-red)" }}
+              onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--brand-red-hover)")}
+              onMouseLeave={e => (e.currentTarget.style.backgroundColor = "var(--brand-red)")}
+            >
+              <Icon name="Phone" size={16} />
+              Вызвать мастера
+            </a>
+          </div>
 
           {/* Mobile menu button */}
           <button className="lg:hidden text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
@@ -561,6 +575,8 @@ export default function Index() {
           </div>
         </div>
       </footer>
+
+      <CallbackModal isOpen={callbackOpen} onClose={() => setCallbackOpen(false)} />
     </div>
   );
 }

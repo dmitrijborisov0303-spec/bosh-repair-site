@@ -108,7 +108,7 @@ export default function Index() {
               <Icon name="Wrench" size={20} className="text-white" />
             </div>
             <div>
-              <div className="font-heading text-xl font-bold text-white tracking-wider">БОШСЕРВИС</div>
+              <div className="font-heading text-xl font-bold text-white tracking-wider">BOSCH SERVICE</div>
               <div className="text-xs text-white/50 -mt-0.5">Центральный сервисный центр</div>
             </div>
           </div>

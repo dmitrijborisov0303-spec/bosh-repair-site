@@ -4,8 +4,43 @@ import urllib.request
 import urllib.parse
 
 
+RATE_LIMIT_MAX = 5
+RATE_LIMIT_WINDOW_MINUTES = 10
+
+
+def get_ip(event: dict) -> str:
+    headers = event.get('headers', {}) or {}
+    for h in ('x-forwarded-for', 'X-Forwarded-For'):
+        if h in headers:
+            return headers[h].split(',')[0].strip()
+    identity = event.get('requestContext', {}).get('identity', {})
+    return identity.get('sourceIp', 'unknown')
+
+
+def check_rate_limit(ip: str) -> bool:
+    import psycopg2
+    conn = psycopg2.connect(os.environ['DATABASE_URL'])
+    cur = conn.cursor()
+    window = f"{RATE_LIMIT_WINDOW_MINUTES} minutes"
+    cur.execute(
+        f"SELECT COUNT(*) FROM rate_limit_log WHERE ip = %s AND created_at > NOW() - INTERVAL '{window}'",
+        (ip,)
+    )
+    count = cur.fetchone()[0]
+    if count >= RATE_LIMIT_MAX:
+        cur.close()
+        conn.close()
+        return False
+    cur.execute("INSERT INTO rate_limit_log (ip) VALUES (%s)", (ip,))
+    cur.execute("DELETE FROM rate_limit_log WHERE created_at < NOW() - INTERVAL '1 hour'")
+    conn.commit()
+    cur.close()
+    conn.close()
+    return True
+
+
 def handler(event: dict, context) -> dict:
-    """Отправка заявки с сайта в Telegram"""
+    """Отправка заявки с сайта в Telegram с защитой от спама"""
 
     if event.get('httpMethod') == 'OPTIONS':
         return {
@@ -19,10 +54,18 @@ def handler(event: dict, context) -> dict:
             'body': ''
         }
 
-    body = json.loads(event.get('body', '{}'))
-    name = body.get('name', '').strip()
-    phone = body.get('phone', '').strip()
-    equipment = body.get('equipment', '').strip()
+    ip = get_ip(event)
+    if not check_rate_limit(ip):
+        return {
+            'statusCode': 429,
+            'headers': {'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Слишком много заявок. Попробуйте позже.'})
+        }
+
+    body = json.loads(event.get('body') or '{}')
+    name = body.get('name', '').strip()[:100]
+    phone = body.get('phone', '').strip()[:20]
+    equipment = body.get('equipment', '').strip()[:100]
 
     if not name or not phone:
         return {

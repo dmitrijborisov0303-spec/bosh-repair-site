@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Icon from "@/components/ui/icon";
 import CallbackModal from "@/components/CallbackModal";
+import { useSubmitRateLimit } from "@/hooks/useSubmitRateLimit";
 
 const SEND_APPLICATION_URL = "https://functions.poehali.dev/8e2e01ab-452f-4967-ae24-2dbd637b802f";
 
@@ -86,10 +87,15 @@ function ContactForm() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+  const rateLimit = useSubmitRateLimit();
 
   const handleSubmit = async () => {
     if (!name.trim() || !phone.trim()) {
       setError("Пожалуйста, укажите имя и телефон");
+      return;
+    }
+    if (!rateLimit.check()) {
+      setError("Заявка уже отправлена. Подождите 30 секунд перед следующей отправкой.");
       return;
     }
     setError("");
@@ -101,10 +107,13 @@ function ContactForm() {
         body: JSON.stringify({ name, phone, equipment }),
       });
       if (res.ok) {
+        rateLimit.register();
         setSent(true);
         setName("");
         setPhone("");
         setEquipment("");
+      } else if (res.status === 429) {
+        setError("Слишком много заявок. Попробуйте через несколько минут.");
       } else {
         setError("Ошибка отправки. Попробуйте ещё раз.");
       }

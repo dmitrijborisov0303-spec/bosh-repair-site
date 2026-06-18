@@ -7,10 +7,10 @@
       "expectedStatus": 200
     },
     {
-      "name": "Missing fields",
+      "name": "Отправка без имени и телефона",
       "method": "POST",
       "path": "/",
-      "body": {"name": "", "phone": ""},
+      "body": {},
       "expectedStatus": 400
     }
   ]

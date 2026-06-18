@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Icon from "@/components/ui/icon";
+import { useSubmitRateLimit } from "@/hooks/useSubmitRateLimit";
 
 const SEND_APPLICATION_URL = "https://functions.poehali.dev/8e2e01ab-452f-4967-ae24-2dbd637b802f";
 
@@ -14,6 +15,7 @@ export default function CallbackModal({ isOpen, onClose }: Props) {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+  const rateLimit = useSubmitRateLimit();
 
   if (!isOpen) return null;
 
@@ -22,15 +24,24 @@ export default function CallbackModal({ isOpen, onClose }: Props) {
       setError("Введите номер телефона");
       return;
     }
+    if (!rateLimit.check()) {
+      setError("Заявка уже отправлена. Подождите 30 секунд перед следующей отправкой.");
+      return;
+    }
     setError("");
     setLoading(true);
     try {
-      await fetch(SEND_APPLICATION_URL, {
+      const res = await fetch(SEND_APPLICATION_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, name, type: "callback" }),
       });
-      setSent(true);
+      if (res.status === 429) {
+        setError("Слишком много заявок. Попробуйте через несколько минут.");
+      } else {
+        rateLimit.register();
+        setSent(true);
+      }
     } catch {
       setError("Ошибка отправки. Попробуйте ещё раз.");
     } finally {

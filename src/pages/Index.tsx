@@ -85,6 +85,7 @@ function ContactForm() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [equipment, setEquipment] = useState("");
+  const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
@@ -93,6 +94,10 @@ function ContactForm() {
   const handleSubmit = async () => {
     if (!name.trim() || !phone.trim()) {
       setError("Пожалуйста, укажите имя и телефон");
+      return;
+    }
+    if (!agreed) {
+      setError("Необходимо согласие на обработку персональных данных");
       return;
     }
     if (!rateLimit.check()) {
@@ -178,18 +183,42 @@ function ContactForm() {
               <option>Вытяжка</option>
             </select>
           </div>
+          <label className="flex items-start gap-3 cursor-pointer select-none">
+            <div className="relative mt-0.5 shrink-0">
+              <input
+                type="checkbox"
+                checked={agreed}
+                onChange={e => setAgreed(e.target.checked)}
+                className="sr-only"
+              />
+              <div
+                className="w-5 h-5 rounded flex items-center justify-center transition-colors"
+                style={{
+                  backgroundColor: agreed ? "var(--brand-red)" : "rgba(255,255,255,0.07)",
+                  border: `1px solid ${agreed ? "var(--brand-red)" : "rgba(255,255,255,0.2)"}`,
+                }}
+              >
+                {agreed && <Icon name="Check" size={12} className="text-white" />}
+              </div>
+            </div>
+            <span className="text-white/50 text-xs leading-relaxed">
+              Я соглашаюсь на обработку персональных данных в соответствии с{" "}
+              <Link to="/privacy" className="underline text-white/70 hover:text-white transition-colors">
+                политикой конфиденциальности
+              </Link>
+            </span>
+          </label>
           {error && <p className="text-red-400 text-sm">{error}</p>}
           <button
             onClick={handleSubmit}
-            disabled={loading}
-            className="w-full py-4 rounded-lg font-bold text-white text-lg mt-2 transition-colors cursor-pointer disabled:opacity-60"
+            disabled={loading || !agreed}
+            className="w-full py-4 rounded-lg font-bold text-white text-lg mt-2 transition-colors cursor-pointer disabled:opacity-40"
             style={{ backgroundColor: "var(--brand-red)" }}
-            onMouseEnter={e => { if (!loading) e.currentTarget.style.backgroundColor = "var(--brand-red-hover)"; }}
+            onMouseEnter={e => { if (!loading && agreed) e.currentTarget.style.backgroundColor = "var(--brand-red-hover)"; }}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = "var(--brand-red)")}
           >
             {loading ? "Отправляем..." : "Отправить заявку"}
           </button>
-          <p className="text-white/30 text-xs text-center">Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности</p>
         </div>
       )}
     </div>

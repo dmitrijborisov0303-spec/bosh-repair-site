@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Icon from "@/components/ui/icon";
 import CallbackModal from "@/components/CallbackModal";
 import { useSubmitRateLimit } from "@/hooks/useSubmitRateLimit";
@@ -575,7 +576,7 @@ export default function Index() {
           </div>
           <p className="text-white/30 text-sm">© 2012 Bosch Service. Все права защищены.</p>
           <div className="flex gap-4 text-white/40 text-sm">
-            <a href="#" className="hover:text-white/70 transition-colors">Политика конфиденциальности</a>
+            <Link to="/privacy" className="hover:text-white/70 transition-colors">Политика конфиденциальности</Link>
             <span>Не является публичной офертой</span>
           </div>
         </div>

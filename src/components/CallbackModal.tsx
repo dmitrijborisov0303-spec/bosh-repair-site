@@ -13,7 +13,6 @@ interface Props {
 export default function CallbackModal({ isOpen, onClose }: Props) {
   const [phone, setPhone] = useState("");
   const [name, setName] = useState("");
-  const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
@@ -24,10 +23,6 @@ export default function CallbackModal({ isOpen, onClose }: Props) {
   const handleSubmit = async () => {
     if (!phone.trim()) {
       setError("Введите номер телефона");
-      return;
-    }
-    if (!agreed) {
-      setError("Необходимо согласие на обработку персональных данных");
       return;
     }
     if (!rateLimit.check()) {
@@ -131,42 +126,23 @@ export default function CallbackModal({ isOpen, onClose }: Props) {
                   style={{ backgroundColor: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)" }}
                 />
               </div>
-              <label className="flex items-start gap-3 cursor-pointer select-none">
-                <div className="relative mt-0.5 shrink-0">
-                  <input
-                    type="checkbox"
-                    checked={agreed}
-                    onChange={e => setAgreed(e.target.checked)}
-                    className="sr-only"
-                  />
-                  <div
-                    className="w-5 h-5 rounded flex items-center justify-center transition-colors"
-                    style={{
-                      backgroundColor: agreed ? "var(--brand-red)" : "rgba(255,255,255,0.07)",
-                      border: `1px solid ${agreed ? "var(--brand-red)" : "rgba(255,255,255,0.2)"}`,
-                    }}
-                  >
-                    {agreed && <Icon name="Check" size={12} className="text-white" />}
-                  </div>
-                </div>
-                <span className="text-white/50 text-xs leading-relaxed">
-                  Я соглашаюсь на обработку персональных данных в соответствии с{" "}
-                  <Link to="/privacy" className="underline text-white/70 hover:text-white transition-colors">
-                    политикой конфиденциальности
-                  </Link>
-                </span>
-              </label>
               {error && <p className="text-red-400 text-sm">{error}</p>}
               <button
                 onClick={handleSubmit}
-                disabled={loading || !agreed}
-                className="w-full py-4 rounded-lg font-bold text-white text-base mt-1 transition-colors disabled:opacity-40"
+                disabled={loading}
+                className="w-full py-4 rounded-lg font-bold text-white text-base mt-1 transition-colors disabled:opacity-60"
                 style={{ backgroundColor: "var(--brand-red)" }}
-                onMouseEnter={e => { if (!loading && agreed) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--brand-red-hover)"; }}
+                onMouseEnter={e => { if (!loading) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--brand-red-hover)"; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--brand-red)"; }}
               >
                 {loading ? "Отправляем..." : "Перезвоните мне"}
               </button>
+              <p className="text-white/30 text-xs text-center">
+                Нажимая на кнопку, вы соглашаетесь с{" "}
+                <Link to="/privacy" className="underline hover:text-white/60 transition-colors">
+                  обработкой персональных данных
+                </Link>
+              </p>
             </div>
           </>
         )}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const STORAGE_KEY = "cookie_consent";
 
@@ -34,9 +35,9 @@ export default function CookieBanner() {
       >
         <p className="text-white/70 text-sm flex-1 leading-relaxed">
           Мы используем файлы cookie для аналитики и улучшения сайта. Нажимая «Принять», вы соглашаетесь с{" "}
-          <a href="#" className="underline text-white/90 hover:text-white transition-colors">
+          <Link to="/privacy" className="underline text-white/90 hover:text-white transition-colors">
             политикой конфиденциальности
-          </a>
+          </Link>
           .
         </p>
         <div className="flex gap-3 shrink-0">

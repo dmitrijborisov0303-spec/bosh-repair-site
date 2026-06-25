@@ -32,6 +32,27 @@
     <script type="text/javascript">window._ab_id_=172901</script>
     <script src="https://cdn.botfaqtor.ru/one.js"></script>
     <script async src="//widgets.mango-office.ru/site/38855"></script>
+    <script>
+      (function() {
+        var defaultTel = 'tel:+74996382751';
+        var synced = false;
+        function applyMangoPhone() {
+          if (synced) return;
+          var links = Array.from(document.querySelectorAll('a[href^="tel:"]'));
+          var mangoLink = links.find(function(el) { return el.getAttribute('href') !== defaultTel; });
+          if (mangoLink) {
+            synced = true;
+            var mangoTel = mangoLink.getAttribute('href');
+            links.forEach(function(el) { el.setAttribute('href', mangoTel); });
+          }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+          var observer = new MutationObserver(applyMangoPhone);
+          observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['href'], childList: true });
+          setTimeout(applyMangoPhone, 3000);
+        });
+      })();
+    </script>
   </head>
 
 <body>

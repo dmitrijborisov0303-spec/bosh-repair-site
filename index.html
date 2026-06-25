@@ -36,6 +36,13 @@
       (function() {
         var defaultTel = 'tel:+74996382751';
         var synced = false;
+        function formatPhone(tel) {
+          var digits = tel.replace('tel:+7', '');
+          if (digits.length === 10) {
+            return '+7 (' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6,8) + '-' + digits.slice(8,10);
+          }
+          return tel.replace('tel:', '');
+        }
         function applyMangoPhone() {
           if (synced) return;
           var links = Array.from(document.querySelectorAll('a[href^="tel:"]'));
@@ -43,7 +50,12 @@
           if (mangoLink) {
             synced = true;
             var mangoTel = mangoLink.getAttribute('href');
-            links.forEach(function(el) { el.setAttribute('href', mangoTel); });
+            var mangoDisplay = formatPhone(mangoTel);
+            links.forEach(function(el) {
+              el.setAttribute('href', mangoTel);
+              var textNode = Array.from(el.childNodes).find(function(n) { return n.nodeType === 3 && n.textContent.trim(); });
+              if (textNode) textNode.textContent = ' ' + mangoDisplay;
+            });
           }
         }
         document.addEventListener('DOMContentLoaded', function() {

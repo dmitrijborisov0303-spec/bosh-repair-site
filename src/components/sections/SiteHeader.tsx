@@ -30,7 +30,7 @@ export default function SiteHeader({ onCallbackOpen }: Props) {
             </span>
             <a href="tel:+74996382751" className="flex items-center gap-1.5 text-white font-semibold hover:text-red-400 transition-colors">
               <Icon name="Phone" size={14} />
-              7 (499) 638-27-51
+              +7 (499) 638-27-51
             </a>
           </div>
         </div>
@@ -89,7 +89,7 @@ export default function SiteHeader({ onCallbackOpen }: Props) {
               <a href="tel:+74996382751" className="mt-2 flex items-center justify-center gap-2 py-3 rounded font-semibold text-white"
                 style={{ backgroundColor: "var(--brand-red)" }}>
                 <Icon name="Phone" size={16} />
-                7 (499) 638-27-51
+                +7 (499) 638-27-51
               </a>
             </div>
           </div>

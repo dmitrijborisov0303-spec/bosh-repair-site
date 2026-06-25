@@ -204,7 +204,7 @@ export default function SiteFaqContacts({ openFaq, setOpenFaq }: Props) {
 
           <div className="grid md:grid-cols-3 gap-8 mb-14">
             {[
-              { icon: "Phone", title: "Телефон", lines: ["7 (499) 638-27-51", "7 (499) 638-27-51"] },
+              { icon: "Phone", title: "Телефон", lines: ["+7 (499) 638-27-51", "+7 (499) 638-27-51"] },
               { icon: "Clock", title: "Режим работы", lines: ["Пн–Вс: 8:00 – 22:00", "Без выходных и праздников"] },
               { icon: "MapPin", title: "Зона обслуживания", lines: ["Москва и Московская", "область (до 30 км от МКАД)"] },
             ].map(contact => (

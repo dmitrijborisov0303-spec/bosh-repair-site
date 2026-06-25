@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Icon from "@/components/ui/icon";
+import { PHONE_DISPLAY, PHONE_TEL } from "@/lib/constants";
 
 const NAV_LINKS = [
   { label: "Главная", href: "#home" },
@@ -28,9 +29,9 @@ export default function SiteHeader({ onCallbackOpen }: Props) {
               <Icon name="Clock" size={14} />
               Пн–Вс: 8:00 – 22:00
             </span>
-            <a href="tel:+74996382751" className="flex items-center gap-1.5 text-white font-semibold hover:text-red-400 transition-colors">
+            <a href={PHONE_TEL} className="flex items-center gap-1.5 text-white font-semibold hover:text-red-400 transition-colors">
               <Icon name="Phone" size={14} />
-              +7 (499) 638-27-51
+              {PHONE_DISPLAY}
             </a>
           </div>
         </div>
@@ -58,7 +59,7 @@ export default function SiteHeader({ onCallbackOpen }: Props) {
             ))}
           </nav>
 
-          <a href="tel:+74996382751"
+          <a href={PHONE_TEL}
             className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded font-semibold text-sm text-white transition-colors"
             style={{ backgroundColor: "var(--brand-red)" }}
             onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--brand-red-hover)")}
@@ -86,10 +87,10 @@ export default function SiteHeader({ onCallbackOpen }: Props) {
                   {link.label}
                 </a>
               ))}
-              <a href="tel:+74996382751" className="mt-2 flex items-center justify-center gap-2 py-3 rounded font-semibold text-white"
+              <a href={PHONE_TEL} className="mt-2 flex items-center justify-center gap-2 py-3 rounded font-semibold text-white"
                 style={{ backgroundColor: "var(--brand-red)" }}>
                 <Icon name="Phone" size={16} />
-                +7 (499) 638-27-51
+                {PHONE_DISPLAY}
               </a>
             </div>
           </div>

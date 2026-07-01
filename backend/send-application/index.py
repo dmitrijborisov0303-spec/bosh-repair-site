@@ -67,7 +67,8 @@ def send_email(name: str, phone: str, equipment: str):
 
     msg.attach(MIMEText(html, 'html', 'utf-8'))
 
-    with smtplib.SMTP_SSL('smtp.yandex.ru', 465) as server:
+    with smtplib.SMTP('smtp.yandex.ru', 587, timeout=15) as server:
+        server.starttls()
         server.login(smtp_user, smtp_password)
         server.sendmail(smtp_user, to_email, msg.as_string())
 

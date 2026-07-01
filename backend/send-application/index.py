@@ -3,6 +3,7 @@ import os
 import smtplib
 import urllib.request
 import urllib.parse
+from datetime import datetime, timezone, timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
@@ -53,11 +54,13 @@ def send_email(name: str, phone: str, equipment: str):
 
     equipment_str = equipment if equipment else 'не указано'
     name_str = name if name else 'не указано'
+    now = datetime.now(timezone(timedelta(hours=3))).strftime('%d.%m.%Y %H:%M (МСК)')
 
     html = f"""
     <div style="font-family: Arial, sans-serif; max-width: 500px; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
         <h2 style="color: #c0392b;">🔧 Новая заявка — BOSCH SERVICE</h2>
         <table style="width:100%; border-collapse: collapse;">
+            <tr><td style="padding: 8px 0; color: #666;">Дата и время:</td><td style="padding: 8px 0; font-weight: bold;">{now}</td></tr>
             <tr><td style="padding: 8px 0; color: #666;">Имя:</td><td style="padding: 8px 0; font-weight: bold;">{name_str}</td></tr>
             <tr><td style="padding: 8px 0; color: #666;">Телефон:</td><td style="padding: 8px 0; font-weight: bold;">{phone}</td></tr>
             <tr><td style="padding: 8px 0; color: #666;">Что сломалось:</td><td style="padding: 8px 0; font-weight: bold;">{equipment_str}</td></tr>
@@ -78,8 +81,10 @@ def send_telegram(name: str, phone: str, equipment: str):
     chat_id = os.environ['TELEGRAM_CHAT_ID']
     equipment_str = equipment if equipment else 'не указано'
     name_str = name if name else 'не указано'
+    now = datetime.now(timezone(timedelta(hours=3))).strftime('%d.%m.%Y %H:%M (МСК)')
     text = (
         f"🔔 Новая заявка на сайте BOSCH SERVICE\n\n"
+        f"🕐 Время: {now}\n"
         f"👤 Имя: {name_str}\n"
         f"📞 Телефон: {phone}\n"
         f"⚙️ Что сломалось: {equipment_str}\n\n"

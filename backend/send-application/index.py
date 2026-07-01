@@ -90,14 +90,14 @@ def send_telegram(name: str, phone: str, equipment: str):
         f"⚙️ Что сломалось: {equipment_str}\n\n"
         f"📧 Полная заявка отправлена на почту"
     )
-    url = f"https://api.telegram.org/bot{token}/sendMessage"
-    data = urllib.parse.urlencode({
+    url = f"https://api.telegram.org:443/bot{token}/sendMessage"
+    payload = json.dumps({
         'chat_id': chat_id,
         'text': text,
         'parse_mode': 'HTML'
-    }).encode()
-    req = urllib.request.Request(url, data=data, method='POST')
-    with urllib.request.urlopen(req) as resp:
+    }).encode('utf-8')
+    req = urllib.request.Request(url, data=payload, method='POST', headers={'Content-Type': 'application/json'})
+    with urllib.request.urlopen(req, timeout=10) as resp:
         resp.read()
 
 

@@ -79,16 +79,11 @@ def send_email(name: str, phone: str, equipment: str):
 def send_telegram(name: str, phone: str, equipment: str):
     token = os.environ['TELEGRAM_BOT_TOKEN']
     chat_id = os.environ['TELEGRAM_CHAT_ID']
-    equipment_str = equipment if equipment else 'не указано'
-    name_str = name if name else 'не указано'
     now = datetime.now(timezone(timedelta(hours=3))).strftime('%d.%m.%Y %H:%M (МСК)')
     text = (
-        f"🔔 Новая заявка на сайте BOSCH SERVICE\n\n"
-        f"🕐 Время: {now}\n"
-        f"👤 Имя: {name_str}\n"
-        f"📞 Телефон: {phone}\n"
-        f"⚙️ Что сломалось: {equipment_str}\n\n"
-        f"📧 Полная заявка отправлена на почту"
+        f"🔔 Новая заявка с сайта BOSCH SERVICE\n"
+        f"🕐 {now}\n\n"
+        f"📧 Подробности — в письме на почте"
     )
     url = f"https://api.telegram.org:443/bot{token}/sendMessage"
     payload = json.dumps({

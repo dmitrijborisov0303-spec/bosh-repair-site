@@ -79,6 +79,9 @@ def send_email(name: str, phone: str, equipment: str):
 def send_telegram(name: str, phone: str, equipment: str):
     token = os.environ['TELEGRAM_BOT_TOKEN']
     chat_ids = [c.strip() for c in os.environ['TELEGRAM_CHAT_ID'].split(',') if c.strip()]
+    extra_chat_id = os.environ.get('TELEGRAM_CHAT_ID_2', '').strip()
+    if extra_chat_id:
+        chat_ids.append(extra_chat_id)
     now = datetime.now(timezone(timedelta(hours=3))).strftime('%d.%m.%Y %H:%M (МСК)')
     text = (
         f"🔔 Новая заявка с сайта BOSCH SERVICE\n"

@@ -96,8 +96,11 @@ def send_telegram(name: str, phone: str, equipment: str):
             'parse_mode': 'HTML'
         }).encode('utf-8')
         req = urllib.request.Request(url, data=payload, method='POST', headers={'Content-Type': 'application/json'})
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            resp.read()
+        try:
+            with urllib.request.urlopen(req, timeout=8) as resp:
+                resp.read()
+        except Exception as e:
+            print(f"Telegram send failed for chat_id {chat_id}: {e}")
 
 
 def handler(event: dict, context) -> dict:
@@ -136,7 +139,10 @@ def handler(event: dict, context) -> dict:
         }
 
     send_email(name, phone, equipment)
-    send_telegram(name, phone, equipment)
+    try:
+        send_telegram(name, phone, equipment)
+    except Exception as e:
+        print(f"Telegram notification failed: {e}")
 
     return {
         'statusCode': 200,

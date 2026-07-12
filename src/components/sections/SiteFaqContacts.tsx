@@ -206,7 +206,7 @@ export default function SiteFaqContacts({ openFaq, setOpenFaq }: Props) {
             {[
               { icon: "Phone", title: "Телефон", lines: ["+7 (499) 638-27-51", "+7 (499) 638-27-51"] },
               { icon: "Clock", title: "Режим работы", lines: ["Пн–Вс: 8:00 – 22:00", "Без выходных и праздников"] },
-              { icon: "MapPin", title: "Зона обслуживания", lines: ["Москва и Московская", "область (до 30 км от МКАД)"] },
+              { icon: "MapPin", title: "Зона обслуживания", lines: ["Москва и Московская", "область"] },
             ].map(contact => (
               <div key={contact.title} className="text-center p-8 rounded-xl" style={{ backgroundColor: "rgba(255,255,255,0.05)" }}>
                 <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-5" style={{ backgroundColor: "var(--brand-red)" }}>

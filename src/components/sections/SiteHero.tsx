@@ -27,7 +27,7 @@ const PRICES = [
 ];
 
 const GUARANTEES = [
-  { icon: "ShieldCheck", title: "Гарантия 12 месяцев", desc: "На все виды выполненных работ предоставляется гарантия 12 месяцев." },
+  { icon: "ShieldCheck", title: "Гарантия 24 месяца", desc: "На все виды выполненных работ предоставляется гарантия 24 месяца." },
   { icon: "Package", title: "Оригинальные запчасти", desc: "Используем только сертифицированные запчасти Bosch и их аналоги проверенных производителей." },
   { icon: "FileText", title: "Официальный акт", desc: "Выдаём акт выполненных работ и гарантийный талон на каждый ремонт." },
   { icon: "RotateCcw", title: "Повторный выезд бесплатно", desc: "Если проблема возникла снова в гарантийный период — мастер приедет без дополнительной оплаты." },
@@ -101,7 +101,7 @@ export default function SiteHero({ onCallbackOpen }: Props) {
 
             <div className="flex flex-wrap gap-6">
               {[
-                { icon: "ShieldCheck", text: "Гарантия 12 месяцев" },
+                { icon: "ShieldCheck", text: "Гарантия 24 месяца" },
                 { icon: "Clock", text: "Выезд за 2 часа" },
                 { icon: "BadgeCheck", text: "Оригинальные запчасти" },
               ].map(item => (
@@ -257,7 +257,7 @@ export default function SiteHero({ onCallbackOpen }: Props) {
                     <Icon name="ShieldCheck" size={28} style={{ color: "var(--brand-red)" }} />
                   </div>
                   <div>
-                    <div className="font-heading text-2xl font-bold" style={{ color: "var(--brand-dark)" }}>12 мес.</div>
+                    <div className="font-heading text-2xl font-bold" style={{ color: "var(--brand-dark)" }}>24 мес.</div>
                     <div className="text-sm" style={{ color: "var(--brand-muted)" }}>гарантия на работы</div>
                   </div>
                 </div>

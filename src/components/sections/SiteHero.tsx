@@ -16,7 +16,7 @@ const SERVICES = [
 ];
 
 const PRICES = [
-  { service: "Диагностика на дому", price: "Бесплатно", note: "при условии ремонта" },
+  { service: "Диагностика на дому", price: "Бесплатно", note: "" },
   { service: "Стиральная машина", price: "от 1 500 ₽", note: "зависит от поломки" },
   { service: "Холодильник", price: "от 2 000 ₽", note: "зависит от поломки" },
   { service: "Посудомоечная машина", price: "от 1 800 ₽", note: "зависит от поломки" },
@@ -170,7 +170,7 @@ export default function SiteHero({ onCallbackOpen }: Props) {
               <div key={i} className="flex items-center justify-between p-5 rounded-xl border" style={{ backgroundColor: "rgba(255,255,255,0.04)", borderColor: "rgba(255,255,255,0.1)" }}>
                 <div>
                   <div className="font-semibold text-white">{item.service}</div>
-                  <div className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.45)" }}>{item.note}</div>
+                  {item.note && <div className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.45)" }}>{item.note}</div>}
                 </div>
                 <div className="font-heading text-xl font-bold text-right ml-4 shrink-0" style={{ color: "var(--brand-gold)" }}>
                   {item.price}

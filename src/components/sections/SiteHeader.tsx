@@ -23,7 +23,7 @@ export default function SiteHeader({ onCallbackOpen }: Props) {
       {/* TOP BAR */}
       <div style={{ backgroundColor: "var(--brand-dark)" }} className="py-2 px-4 text-sm hidden md:block">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <span className="text-white/60">Ремонт бытовой техники Bosch — Москва и область</span>
+          <span className="text-white/60">Ремонт бытовой техники Bosch</span>
           <div className="flex gap-6 items-center text-white/80">
             <span className="flex items-center gap-1.5">
               <Icon name="Clock" size={14} />

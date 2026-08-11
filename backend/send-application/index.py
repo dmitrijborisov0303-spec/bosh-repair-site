@@ -147,8 +147,14 @@ def send_bitrix24(name: str, phone: str, equipment: str, utm: dict, request_type
 
     url = webhook_url.rstrip('/') + '/crm.lead.add.json'
     req = urllib.request.Request(url, data=payload, method='POST', headers={'Content-Type': 'application/json'})
-    with urllib.request.urlopen(req, timeout=8) as resp:
-        resp.read()
+    try:
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            resp.read()
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode('utf-8', errors='replace')
+        masked_url = url[:40] + '...' if len(url) > 40 else url
+        print(f"Bitrix24 HTTPError {e.code} for url starting '{masked_url}': {error_body}")
+        raise
 
 
 def handler(event: dict, context) -> dict:

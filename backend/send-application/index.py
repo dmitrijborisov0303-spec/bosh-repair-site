@@ -71,7 +71,7 @@ def send_email(name: str, phone: str, equipment: str, utm: dict):
 
     html = f"""
     <div style="font-family: Arial, sans-serif; max-width: 500px; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-        <h2 style="color: #c0392b;">🔧 Новая заявка — BOSCH SERVICE</h2>
+        <h2 style="color: #c0392b;">🔧 Новая заявка — Bosch1</h2>
         <table style="width:100%; border-collapse: collapse;">
             <tr><td style="padding: 8px 0; color: #666;">Дата и время:</td><td style="padding: 8px 0; font-weight: bold;">{now}</td></tr>
             <tr><td style="padding: 8px 0; color: #666;">Имя:</td><td style="padding: 8px 0; font-weight: bold;">{name_str}</td></tr>
@@ -101,7 +101,7 @@ def send_telegram(name: str, phone: str, equipment: str, utm: dict):
     if utm:
         utm_text = '\n' + '\n'.join(f'{key}: {value}' for key, value in utm.items())
     text = (
-        f"🔔 Новая заявка с сайта BOSCH SERVICE\n"
+        f"🔔 Новая заявка с сайта Bosch1\n"
         f"🕐 {now}\n\n"
         f"📧 Подробности — в письме на почте"
         f"{utm_text}"
@@ -127,7 +127,7 @@ def send_bitrix24(name: str, phone: str, equipment: str, utm: dict, request_type
         return
 
     digits_phone = ''.join(c for c in phone if c.isdigit())
-    title = 'Заявка с сайта (Обратный звонок)' if request_type == 'callback' else 'Заявка с сайта (Форма обратной связи)'
+    title = 'Заявка с сайта Bosch1 (Обратный звонок)' if request_type == 'callback' else 'Заявка с сайта Bosch1 (Форма обратной связи)'
     if equipment:
         title += f' — {equipment}'
 

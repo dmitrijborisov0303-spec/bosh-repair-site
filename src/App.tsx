@@ -8,8 +8,11 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import CookieBanner from "./components/CookieBanner";
+import { captureUtmParams } from "@/lib/utm";
 
 const queryClient = new QueryClient();
+
+captureUtmParams();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

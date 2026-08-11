@@ -42,7 +42,14 @@ def check_rate_limit(ip: str) -> bool:
     return True
 
 
-def send_email(name: str, phone: str, equipment: str):
+UTM_KEYS = ('utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term')
+
+
+def extract_utm(body: dict) -> dict:
+    return {key: body.get(key, '').strip()[:200] for key in UTM_KEYS if body.get(key, '').strip()}
+
+
+def send_email(name: str, phone: str, equipment: str, utm: dict):
     smtp_user = os.environ['SMTP_USER']
     smtp_password = os.environ['SMTP_PASSWORD']
     to_email = smtp_user
@@ -56,6 +63,11 @@ def send_email(name: str, phone: str, equipment: str):
     name_str = name if name else 'не указано'
     now = datetime.now(timezone(timedelta(hours=3))).strftime('%d.%m.%Y %H:%M (МСК)')
 
+    utm_rows = ''.join(
+        f'<tr><td style="padding: 8px 0; color: #666;">{key}:</td><td style="padding: 8px 0; font-weight: bold;">{value}</td></tr>'
+        for key, value in utm.items()
+    )
+
     html = f"""
     <div style="font-family: Arial, sans-serif; max-width: 500px; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
         <h2 style="color: #c0392b;">🔧 Новая заявка — BOSCH SERVICE</h2>
@@ -64,6 +76,7 @@ def send_email(name: str, phone: str, equipment: str):
             <tr><td style="padding: 8px 0; color: #666;">Имя:</td><td style="padding: 8px 0; font-weight: bold;">{name_str}</td></tr>
             <tr><td style="padding: 8px 0; color: #666;">Телефон:</td><td style="padding: 8px 0; font-weight: bold;">{phone}</td></tr>
             <tr><td style="padding: 8px 0; color: #666;">Что сломалось:</td><td style="padding: 8px 0; font-weight: bold;">{equipment_str}</td></tr>
+            {utm_rows}
         </table>
     </div>
     """
@@ -76,17 +89,21 @@ def send_email(name: str, phone: str, equipment: str):
         server.sendmail(smtp_user, to_email, msg.as_string())
 
 
-def send_telegram(name: str, phone: str, equipment: str):
+def send_telegram(name: str, phone: str, equipment: str, utm: dict):
     token = os.environ['TELEGRAM_BOT_TOKEN']
     chat_ids = [c.strip() for c in os.environ['TELEGRAM_CHAT_ID'].split(',') if c.strip()]
     extra_chat_id = os.environ.get('TELEGRAM_CHAT_ID_2', '').strip()
     if extra_chat_id:
         chat_ids.append(extra_chat_id)
     now = datetime.now(timezone(timedelta(hours=3))).strftime('%d.%m.%Y %H:%M (МСК)')
+    utm_text = ''
+    if utm:
+        utm_text = '\n' + '\n'.join(f'{key}: {value}' for key, value in utm.items())
     text = (
         f"🔔 Новая заявка с сайта BOSCH SERVICE\n"
         f"🕐 {now}\n\n"
         f"📧 Подробности — в письме на почте"
+        f"{utm_text}"
     )
     url = f"https://api.telegram.org:443/bot{token}/sendMessage"
     for chat_id in chat_ids:
@@ -130,6 +147,7 @@ def handler(event: dict, context) -> dict:
     name = body.get('name', '').strip()[:100]
     phone = body.get('phone', '').strip()[:20]
     equipment = body.get('equipment', '').strip()[:100]
+    utm = extract_utm(body)
 
     if not phone:
         return {
@@ -138,9 +156,9 @@ def handler(event: dict, context) -> dict:
             'body': json.dumps({'error': 'Телефон обязателен'})
         }
 
-    send_email(name, phone, equipment)
+    send_email(name, phone, equipment, utm)
     try:
-        send_telegram(name, phone, equipment)
+        send_telegram(name, phone, equipment, utm)
     except Exception as e:
         print(f"Telegram notification failed: {e}")
 

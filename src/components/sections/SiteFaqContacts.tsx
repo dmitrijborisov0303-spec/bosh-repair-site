@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Icon from "@/components/ui/icon";
 import { useSubmitRateLimit } from "@/hooks/useSubmitRateLimit";
+import { getUtmParams } from "@/lib/utm";
 
 type IconName = string;
 
@@ -58,7 +59,7 @@ function ContactForm() {
       const res = await fetch(SEND_APPLICATION_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, phone, equipment }),
+        body: JSON.stringify({ name, phone, equipment, ...getUtmParams() }),
       });
       if (res.ok) {
         rateLimit.register();

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Icon from "@/components/ui/icon";
 import { useSubmitRateLimit } from "@/hooks/useSubmitRateLimit";
+import { getUtmParams } from "@/lib/utm";
 
 const SEND_APPLICATION_URL = "https://functions.poehali.dev/8e2e01ab-452f-4967-ae24-2dbd637b802f";
 
@@ -35,7 +36,7 @@ export default function CallbackModal({ isOpen, onClose }: Props) {
       const res = await fetch(SEND_APPLICATION_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, name, type: "callback" }),
+        body: JSON.stringify({ phone, name, type: "callback", ...getUtmParams() }),
       });
       if (res.status === 429) {
         setError("Слишком много заявок. Попробуйте через несколько минут.");

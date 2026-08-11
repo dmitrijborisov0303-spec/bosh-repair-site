@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import smtplib
 import urllib.request
 import urllib.parse
@@ -145,6 +146,7 @@ def send_bitrix24(name: str, phone: str, equipment: str, utm: dict, request_type
         'params': {'REGISTER_SONET': 'Y'}
     }).encode('utf-8')
 
+    webhook_url = re.sub(r'/crm\.lead\.add(\.json)?/?$', '', webhook_url)
     url = webhook_url.rstrip('/') + '/crm.lead.add.json'
     req = urllib.request.Request(url, data=payload, method='POST', headers={'Content-Type': 'application/json'})
     try:

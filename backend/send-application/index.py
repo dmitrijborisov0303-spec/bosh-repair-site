@@ -120,8 +120,39 @@ def send_telegram(name: str, phone: str, equipment: str, utm: dict):
             print(f"Telegram send failed for chat_id {chat_id}: {e}")
 
 
+def send_bitrix24(name: str, phone: str, equipment: str, utm: dict, request_type: str):
+    webhook_url = os.environ.get('BITRIX24_WEBHOOK_URL', '').strip()
+    if not webhook_url:
+        return
+
+    digits_phone = ''.join(c for c in phone if c.isdigit())
+    title = 'Заявка с сайта (Обратный звонок)' if request_type == 'callback' else 'Заявка с сайта (Форма обратной связи)'
+    if equipment:
+        title += f' — {equipment}'
+
+    fields = {
+        'TITLE': title,
+        'NAME': name or 'Не указано',
+        'PHONE': [
+            {'VALUE': digits_phone, 'VALUE_TYPE': 'WORK'}
+        ],
+    }
+    for key, value in utm.items():
+        fields[key.upper()] = value
+
+    payload = json.dumps({
+        'fields': fields,
+        'params': {'REGISTER_SONET': 'Y'}
+    }).encode('utf-8')
+
+    url = webhook_url.rstrip('/') + '/crm.lead.add.json'
+    req = urllib.request.Request(url, data=payload, method='POST', headers={'Content-Type': 'application/json'})
+    with urllib.request.urlopen(req, timeout=8) as resp:
+        resp.read()
+
+
 def handler(event: dict, context) -> dict:
-    """Отправка заявки с сайта: письмо на email + уведомление в Telegram"""
+    """Отправка заявки с сайта: письмо на email + уведомление в Telegram + лид в Битрикс24"""
 
     if event.get('httpMethod') == 'OPTIONS':
         return {
@@ -147,6 +178,7 @@ def handler(event: dict, context) -> dict:
     name = body.get('name', '').strip()[:100]
     phone = body.get('phone', '').strip()[:20]
     equipment = body.get('equipment', '').strip()[:100]
+    request_type = body.get('type', '').strip()[:20]
     utm = extract_utm(body)
 
     if not phone:
@@ -161,6 +193,10 @@ def handler(event: dict, context) -> dict:
         send_telegram(name, phone, equipment, utm)
     except Exception as e:
         print(f"Telegram notification failed: {e}")
+    try:
+        send_bitrix24(name, phone, equipment, utm, request_type)
+    except Exception as e:
+        print(f"Bitrix24 notification failed: {e}")
 
     return {
         'statusCode': 200,

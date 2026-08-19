@@ -107,6 +107,11 @@ def send_telegram(name: str, phone: str, equipment: str, utm: dict):
         f"{utm_text}"
     )
     url = f"https://api.telegram.org:443/bot{token}/sendMessage"
+    proxy_url = os.environ.get('TELEGRAM_PROXY_URL', '').strip()
+    opener = urllib.request.build_opener(
+        urllib.request.ProxyHandler({'https': proxy_url, 'http': proxy_url})
+    ) if proxy_url else urllib.request.build_opener()
+
     for chat_id in chat_ids:
         payload = json.dumps({
             'chat_id': chat_id,
@@ -115,7 +120,7 @@ def send_telegram(name: str, phone: str, equipment: str, utm: dict):
         }).encode('utf-8')
         req = urllib.request.Request(url, data=payload, method='POST', headers={'Content-Type': 'application/json'})
         try:
-            with urllib.request.urlopen(req, timeout=8) as resp:
+            with opener.open(req, timeout=8) as resp:
                 resp.read()
         except Exception as e:
             print(f"Telegram send failed for chat_id {chat_id}: {e}")

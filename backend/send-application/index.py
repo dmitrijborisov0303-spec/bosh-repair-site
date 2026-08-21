@@ -169,9 +169,13 @@ def send_bitrix24(name: str, phone: str, equipment: str, utm: dict, request_type
         })
         contact_id = contact_result.get('result')
 
+    utm_source = utm.get('utm_source', '').strip().lower()
+    source_id = 'YANDEX_DIRECT' if utm_source in ('yandex', 'direct') else 'WEB'
+
     fields = {
         'TITLE': title,
         'COMMENTS': f'Телефон: {phone}\nЧто сломалось: {equipment or "не указано"}',
+        'SOURCE_ID': source_id,
     }
     if contact_id:
         fields['CONTACT_IDS'] = [contact_id]

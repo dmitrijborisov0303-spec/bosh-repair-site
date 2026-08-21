@@ -36,7 +36,6 @@ const FAQ = [
 ];
 
 function ContactForm() {
-  const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [equipment, setEquipment] = useState("");
   const [loading, setLoading] = useState(false);
@@ -45,8 +44,8 @@ function ContactForm() {
   const rateLimit = useSubmitRateLimit();
 
   const handleSubmit = async () => {
-    if (!name.trim() || !phone.trim()) {
-      setError("Пожалуйста, укажите имя и телефон");
+    if (!phone.trim()) {
+      setError("Пожалуйста, укажите телефон");
       return;
     }
     if (!rateLimit.check()) {
@@ -59,12 +58,11 @@ function ContactForm() {
       const res = await fetch(SEND_APPLICATION_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, phone, equipment, ...getUtmParams() }),
+        body: JSON.stringify({ phone, equipment, ...getUtmParams() }),
       });
       if (res.ok) {
         rateLimit.register();
         setSent(true);
-        setName("");
         setPhone("");
         setEquipment("");
       } else if (res.status === 429) {
@@ -93,17 +91,6 @@ function ContactForm() {
         </div>
       ) : (
         <div className="space-y-4">
-          <div>
-            <label className="block text-white/70 text-sm mb-2 font-medium">Ваше имя</label>
-            <input
-              type="text"
-              placeholder="Иван Иванов"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              className="w-full rounded-lg px-4 py-3 text-white placeholder-white/30 outline-none transition-all"
-              style={{ backgroundColor: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)" }}
-            />
-          </div>
           <div>
             <label className="block text-white/70 text-sm mb-2 font-medium">Телефон</label>
             <input

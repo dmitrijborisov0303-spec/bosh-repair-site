@@ -13,7 +13,6 @@ interface Props {
 
 export default function CallbackModal({ isOpen, onClose }: Props) {
   const [phone, setPhone] = useState("");
-  const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
@@ -36,7 +35,7 @@ export default function CallbackModal({ isOpen, onClose }: Props) {
       const res = await fetch(SEND_APPLICATION_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, name, type: "callback", ...getUtmParams() }),
+        body: JSON.stringify({ phone, type: "callback", ...getUtmParams() }),
       });
       if (res.status === 429) {
         setError("Слишком много заявок. Попробуйте через несколько минут.");
@@ -53,7 +52,6 @@ export default function CallbackModal({ isOpen, onClose }: Props) {
 
   const handleClose = () => {
     setPhone("");
-    setName("");
     setError("");
     setSent(false);
     onClose();
@@ -105,17 +103,6 @@ export default function CallbackModal({ isOpen, onClose }: Props) {
             </div>
 
             <div className="flex flex-col gap-4">
-              <div>
-                <label className="block text-white/70 text-sm mb-1.5 font-medium">Ваше имя</label>
-                <input
-                  type="text"
-                  placeholder="Иван"
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  className="w-full rounded-lg px-4 py-3 outline-none text-white/90 placeholder:text-white/30 transition-all"
-                  style={{ backgroundColor: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)" }}
-                />
-              </div>
               <div>
                 <label className="block text-white/70 text-sm mb-1.5 font-medium">Телефон *</label>
                 <input

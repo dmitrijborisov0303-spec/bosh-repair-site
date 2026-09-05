@@ -58,7 +58,7 @@ function ContactForm() {
       const res = await fetch(SEND_APPLICATION_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, equipment, ...getUtmParams() }),
+        body: JSON.stringify({ phone, equipment, site: window.location.hostname, ...getUtmParams() }),
       });
       if (res.ok) {
         rateLimit.register();

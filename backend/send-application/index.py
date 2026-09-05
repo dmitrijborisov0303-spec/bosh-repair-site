@@ -140,7 +140,7 @@ def bitrix_call(base_url: str, method: str, params: dict) -> dict:
         raise
 
 
-def send_bitrix24(name: str, phone: str, equipment: str, utm: dict, request_type: str):
+def send_bitrix24(name: str, phone: str, equipment: str, utm: dict, request_type: str, site: str):
     webhook_url = os.environ.get('BITRIX24_WEBHOOK_URL', '').strip()
     if not webhook_url:
         return
@@ -172,10 +172,12 @@ def send_bitrix24(name: str, phone: str, equipment: str, utm: dict, request_type
     utm_source = utm.get('utm_source', '').strip().lower()
     source_id = 'YANDEX_DIRECT' if utm_source in ('yandex', 'direct') else 'WEB'
 
+    site_str = site or 'не указан'
     fields = {
         'TITLE': title,
-        'COMMENTS': f'Телефон: {phone}\nЧто сломалось: {equipment or "не указано"}',
+        'COMMENTS': f'Телефон: {phone}\nЧто сломалось: {equipment or "не указано"}\nСайт: {site_str}',
         'SOURCE_ID': source_id,
+        'SOURCE_DESCRIPTION': site_str,
     }
     if contact_id:
         fields['CONTACT_IDS'] = [contact_id]
@@ -216,6 +218,7 @@ def handler(event: dict, context) -> dict:
     phone = body.get('phone', '').strip()[:20]
     equipment = body.get('equipment', '').strip()[:100]
     request_type = body.get('type', '').strip()[:20]
+    site = body.get('site', '').strip()[:100]
     utm = extract_utm(body)
 
     if not phone:
@@ -231,7 +234,7 @@ def handler(event: dict, context) -> dict:
     except Exception as e:
         print(f"Telegram notification failed: {e}")
     try:
-        send_bitrix24(name, phone, equipment, utm, request_type)
+        send_bitrix24(name, phone, equipment, utm, request_type, site)
     except Exception as e:
         print(f"Bitrix24 notification failed: {e}")
 

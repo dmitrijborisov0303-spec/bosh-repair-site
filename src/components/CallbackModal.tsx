@@ -35,7 +35,7 @@ export default function CallbackModal({ isOpen, onClose }: Props) {
       const res = await fetch(SEND_APPLICATION_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, type: "callback", ...getUtmParams() }),
+        body: JSON.stringify({ phone, type: "callback", site: window.location.hostname, ...getUtmParams() }),
       });
       if (res.status === 429) {
         setError("Слишком много заявок. Попробуйте через несколько минут.");

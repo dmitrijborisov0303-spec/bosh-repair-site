@@ -140,6 +140,32 @@ def bitrix_call(base_url: str, method: str, params: dict) -> dict:
         raise
 
 
+def get_site_source_id(webhook_url: str, site: str) -> str:
+    site_clean = (site or '').strip().lower()
+    if not site_clean:
+        return 'WEB'
+    status_id = re.sub(r'[^a-z0-9]+', '_', site_clean).strip('_').upper()[:40]
+    if not status_id:
+        return 'WEB'
+    try:
+        result = bitrix_call(webhook_url, 'crm.status.list', {
+            'filter': {'ENTITY_ID': 'SOURCE', 'STATUS_ID': status_id}
+        })
+        existing = result.get('result') or []
+        if not existing:
+            bitrix_call(webhook_url, 'crm.status.add', {
+                'fields': {
+                    'ENTITY_ID': 'SOURCE',
+                    'STATUS_ID': status_id,
+                    'NAME': site_clean,
+                }
+            })
+    except Exception as e:
+        print(f"Bitrix24 source status setup failed for site '{site_clean}': {e}")
+        return 'WEB'
+    return status_id
+
+
 def send_bitrix24(name: str, phone: str, equipment: str, utm: dict, request_type: str, site: str):
     webhook_url = os.environ.get('BITRIX24_WEBHOOK_URL', '').strip()
     if not webhook_url:
@@ -170,7 +196,10 @@ def send_bitrix24(name: str, phone: str, equipment: str, utm: dict, request_type
         contact_id = contact_result.get('result')
 
     utm_source = utm.get('utm_source', '').strip().lower()
-    source_id = 'YANDEX_DIRECT' if utm_source in ('yandex', 'direct') else 'WEB'
+    if utm_source in ('yandex', 'direct'):
+        source_id = 'YANDEX_DIRECT'
+    else:
+        source_id = get_site_source_id(webhook_url, site)
 
     site_str = site or 'не указан'
     fields = {

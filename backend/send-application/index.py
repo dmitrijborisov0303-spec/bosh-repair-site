@@ -207,6 +207,7 @@ def send_bitrix24(name: str, phone: str, equipment: str, utm: dict, request_type
         'COMMENTS': f'Телефон: {phone}\nЧто сломалось: {equipment or "не указано"}\nСайт: {site_str}',
         'SOURCE_ID': source_id,
         'SOURCE_DESCRIPTION': site_str,
+        'CATEGORY_ID': 5,
     }
     if contact_id:
         fields['CONTACT_IDS'] = [contact_id]

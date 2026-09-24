@@ -1,5 +1,5 @@
 import Icon from "@/components/ui/icon";
-import { PHONE_TEL } from "@/lib/constants";
+import { PHONE_DISPLAY, PHONE_TEL } from "@/lib/constants";
 
 type IconName = string;
 
@@ -73,13 +73,13 @@ export default function SiteHero({ onCallbackOpen }: Props) {
 
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
               <a href={PHONE_TEL}
-                className="flex items-center justify-center gap-2 px-8 py-4 rounded text-white font-bold text-lg transition-colors"
+                className="flex flex-col items-center justify-center gap-1 px-8 py-4 rounded text-white font-bold transition-colors"
                 style={{ backgroundColor: "var(--brand-red)" }}
                 onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--brand-red-hover)")}
                 onMouseLeave={e => (e.currentTarget.style.backgroundColor = "var(--brand-red)")}
               >
                 <Icon name="Phone" size={20} />
-                Вызвать мастера
+                <span className="whitespace-nowrap text-base">{PHONE_DISPLAY}</span>
               </a>
               <button
                 onClick={onCallbackOpen}

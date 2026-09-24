@@ -258,7 +258,10 @@ def handler(event: dict, context) -> dict:
             'body': json.dumps({'error': 'Телефон обязателен'})
         }
 
-    send_email(name, phone, equipment, utm)
+    try:
+        send_email(name, phone, equipment, utm)
+    except Exception as e:
+        print(f"Email notification failed: {e}")
     try:
         send_telegram(name, phone, equipment, utm)
     except Exception as e:

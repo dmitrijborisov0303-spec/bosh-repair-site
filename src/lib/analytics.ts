@@ -1,7 +1,8 @@
-const MAIN_COUNTER = 101026698;
+const METRIKA_COUNTERS = [101026698, 109804992, 112997166];
 
 // Соответствие ID рекламной кампании Яндекс.Директ (число в конце utm_campaign) счётчику Метрики.
-// Впишите сюда ID кампаний по видам техники, когда они будут созданы в Директе:
+// Когда появятся ID кампаний по видам техники — впишите их сюда, и цель по такой заявке
+// будет уходить ТОЛЬКО в привязанный счётчик (плюс во все счётчики, как сейчас, если не заполнено).
 // '123456': 101026698,
 // '789012': 112997166,
 const CAMPAIGN_COUNTER_MAP: Record<string, number> = {
@@ -25,9 +26,8 @@ function getCampaignId(): string | null {
 function getTargetCounters(): number[] {
   const campaignId = getCampaignId();
   const mapped = campaignId ? CAMPAIGN_COUNTER_MAP[campaignId] : undefined;
-  const counters = new Set<number>([MAIN_COUNTER]);
-  if (mapped) counters.add(mapped);
-  return Array.from(counters);
+  if (mapped) return [mapped];
+  return METRIKA_COUNTERS;
 }
 
 export function reachGoal(target: string, params?: Record<string, unknown>): void {

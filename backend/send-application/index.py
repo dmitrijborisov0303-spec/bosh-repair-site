@@ -120,7 +120,7 @@ def send_telegram(name: str, phone: str, equipment: str, utm: dict):
         }).encode('utf-8')
         req = urllib.request.Request(url, data=payload, method='POST', headers={'Content-Type': 'application/json'})
         try:
-            with opener.open(req, timeout=8) as resp:
+            with opener.open(req, timeout=4) as resp:
                 resp.read()
         except Exception as e:
             print(f"Telegram send failed for chat_id {chat_id}: {e}")
@@ -130,13 +130,16 @@ def bitrix_call(base_url: str, method: str, params: dict) -> dict:
     payload = json.dumps(params).encode('utf-8')
     url = base_url.rstrip('/') + f'/{method}.json'
     req = urllib.request.Request(url, data=payload, method='POST', headers={'Content-Type': 'application/json'})
+    masked_url = url[:40] + '...' if len(url) > 40 else url
     try:
         with urllib.request.urlopen(req, timeout=8) as resp:
             return json.loads(resp.read().decode('utf-8'))
     except urllib.error.HTTPError as e:
         error_body = e.read().decode('utf-8', errors='replace')
-        masked_url = url[:40] + '...' if len(url) > 40 else url
         print(f"Bitrix24 HTTPError {e.code} for url starting '{masked_url}': {error_body}")
+        raise
+    except Exception as e:
+        print(f"Bitrix24 request failed for url starting '{masked_url}': {type(e).__name__}: {e}")
         raise
 
 
@@ -259,6 +262,10 @@ def handler(event: dict, context) -> dict:
         }
 
     try:
+        send_bitrix24(name, phone, equipment, utm, request_type, site)
+    except Exception as e:
+        print(f"Bitrix24 notification failed: {type(e).__name__}: {e}")
+    try:
         send_email(name, phone, equipment, utm)
     except Exception as e:
         print(f"Email notification failed: {e}")
@@ -266,10 +273,6 @@ def handler(event: dict, context) -> dict:
         send_telegram(name, phone, equipment, utm)
     except Exception as e:
         print(f"Telegram notification failed: {e}")
-    try:
-        send_bitrix24(name, phone, equipment, utm, request_type, site)
-    except Exception as e:
-        print(f"Bitrix24 notification failed: {e}")
 
     return {
         'statusCode': 200,

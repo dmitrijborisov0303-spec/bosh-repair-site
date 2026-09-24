@@ -90,42 +90,6 @@ def send_email(name: str, phone: str, equipment: str, utm: dict):
         server.sendmail(smtp_user, to_email, msg.as_string())
 
 
-def send_telegram(name: str, phone: str, equipment: str, utm: dict):
-    token = os.environ['TELEGRAM_BOT_TOKEN']
-    chat_ids = [c.strip() for c in os.environ['TELEGRAM_CHAT_ID'].split(',') if c.strip()]
-    extra_chat_id = os.environ.get('TELEGRAM_CHAT_ID_2', '').strip()
-    if extra_chat_id:
-        chat_ids.append(extra_chat_id)
-    now = datetime.now(timezone(timedelta(hours=3))).strftime('%d.%m.%Y %H:%M (МСК)')
-    utm_text = ''
-    if utm:
-        utm_text = '\n' + '\n'.join(f'{key}: {value}' for key, value in utm.items())
-    text = (
-        f"🔔 Новая заявка с сайта Bosch1\n"
-        f"🕐 {now}\n\n"
-        f"📧 Подробности — в письме на почте"
-        f"{utm_text}"
-    )
-    url = f"https://api.telegram.org:443/bot{token}/sendMessage"
-    proxy_url = os.environ.get('TELEGRAM_PROXY_URL', '').strip()
-    opener = urllib.request.build_opener(
-        urllib.request.ProxyHandler({'https': proxy_url, 'http': proxy_url})
-    ) if proxy_url else urllib.request.build_opener()
-
-    for chat_id in chat_ids:
-        payload = json.dumps({
-            'chat_id': chat_id,
-            'text': text,
-            'parse_mode': 'HTML'
-        }).encode('utf-8')
-        req = urllib.request.Request(url, data=payload, method='POST', headers={'Content-Type': 'application/json'})
-        try:
-            with opener.open(req, timeout=4) as resp:
-                resp.read()
-        except Exception as e:
-            print(f"Telegram send failed for chat_id {chat_id}: {e}")
-
-
 def bitrix_call(base_url: str, method: str, params: dict) -> dict:
     payload = json.dumps(params).encode('utf-8')
     url = base_url.rstrip('/') + f'/{method}.json'
@@ -224,7 +188,7 @@ def send_bitrix24(name: str, phone: str, equipment: str, utm: dict, request_type
 
 
 def handler(event: dict, context) -> dict:
-    """Отправка заявки с сайта: письмо на email + уведомление в Telegram + сделка в Битрикс24"""
+    """Отправка заявки с сайта: письмо на email + сделка в Битрикс24"""
 
     if event.get('httpMethod') == 'OPTIONS':
         return {
@@ -269,10 +233,6 @@ def handler(event: dict, context) -> dict:
         send_email(name, phone, equipment, utm)
     except Exception as e:
         print(f"Email notification failed: {e}")
-    try:
-        send_telegram(name, phone, equipment, utm)
-    except Exception as e:
-        print(f"Telegram notification failed: {e}")
 
     return {
         'statusCode': 200,

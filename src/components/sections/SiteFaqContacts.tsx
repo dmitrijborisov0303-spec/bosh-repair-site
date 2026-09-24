@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Icon from "@/components/ui/icon";
 import { useSubmitRateLimit } from "@/hooks/useSubmitRateLimit";
 import { getUtmParams } from "@/lib/utm";
+import { reachGoal } from "@/lib/analytics";
 
 type IconName = string;
 
@@ -62,6 +63,7 @@ function ContactForm() {
       });
       if (res.ok) {
         rateLimit.register();
+        reachGoal("APPLICATION_SENT");
         setSent(true);
         setPhone("");
         setEquipment("");

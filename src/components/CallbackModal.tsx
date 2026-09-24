@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Icon from "@/components/ui/icon";
 import { useSubmitRateLimit } from "@/hooks/useSubmitRateLimit";
 import { getUtmParams } from "@/lib/utm";
+import { reachGoal } from "@/lib/analytics";
 
 const SEND_APPLICATION_URL = "https://functions.poehali.dev/8e2e01ab-452f-4967-ae24-2dbd637b802f";
 
@@ -41,6 +42,7 @@ export default function CallbackModal({ isOpen, onClose }: Props) {
         setError("Слишком много заявок. Попробуйте через несколько минут.");
       } else {
         rateLimit.register();
+        reachGoal("CALLBACK_SENT");
         setSent(true);
       }
     } catch {
